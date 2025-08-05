@@ -4,6 +4,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NDAController;
 use App\Http\Controllers\DCAFController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 use App\Http\Controllers\PerangkatController;
 use App\Http\Controllers\PerangkatImportController;
@@ -119,7 +120,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/rack/data', [RackController::class, 'getRacks'])->name('rack.getData');
 
-    Route::post('/rack', [RackController::class, 'storeRack'])->name('rack.store');
+     Route::post('/rack', [RackController::class, 'storeRack'])->name('rack.store');
     Route::delete('/rack/{kode_region}/{kode_site}/{no_rack}', [RackController::class, 'destroy'])->name('rack.destroy');
     Route::delete('/datarack/{kode_region}/{kode_site}/{no_rack}/{u}', [RackController::class, 'destroyData'])->name('datarack.destroy');
 

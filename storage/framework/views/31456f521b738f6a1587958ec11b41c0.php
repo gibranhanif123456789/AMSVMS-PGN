@@ -1,52 +1,53 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'Aset Perangkat'); ?>
+<?php $__env->startSection('page_title', 'Aset Perangkat'); ?>
 
-@section('title', 'Aset Perangkat')
-@section('page_title', 'Aset Perangkat')
-
-@section('styles')
+<?php $__env->startSection('styles'); ?>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
     <div class="main">
-        @if(auth()->user()->role == '1' || auth()->user()->role == '2')
+        <?php if(auth()->user()->role == '1' || auth()->user()->role == '2'): ?>
         <div class="button-wrapper" style="margin-top: 20px;">
             <button class="btn btn-primary mb-3" onclick="openModal('modalTambahPerangkat')">+ Tambah Perangkat</button>
             <button type="button" class="btn btn-primary mb-3" onclick="openModal('importModal')">Impor Data Perangkat</button>
             <button type="button" class="btn btn-primary mb-3" onclick="openModal('exportModal')">Ekspor Data Perangkat</button>
         </div>
 
-        <form method="GET" action="{{ route('perangkat.index') }}" id="filterForm">
+        <form method="GET" action="<?php echo e(route('perangkat.index')); ?>" id="filterForm">
         <div class="filter-container" style="margin-top: 20px;">
                 <select name="kode_region[]" class="select2" multiple data-placeholder="Pilih Region" onchange="document.getElementById('filterForm').submit()">
-                    @foreach($regions as $region)
-                        <option value="{{ $region->kode_region }}" {{ in_array($region->kode_region, request('kode_region', [])) ? 'selected' : '' }}>
-                             {{ $region->nama_region }}
+                    <?php $__currentLoopData = $regions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $region): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <option value="<?php echo e($region->kode_region); ?>" <?php echo e(in_array($region->kode_region, request('kode_region', [])) ? 'selected' : ''); ?>>
+                             <?php echo e($region->nama_region); ?>
+
                         </option>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </select>
 
                 <select name="kode_site[]" class="select2" multiple 
                         data-placeholder="Pilih Site"
-                        {{ request()->filled('kode_region') ? '' : 'disabled' }}>
-                    @foreach($filteredSites as $site)
-                        <option value="{{ $site->kode_site }}" 
-                                {{ in_array($site->kode_site, request('kode_site', [])) ? 'selected' : '' }}>
-                            {{ $site->nama_site }}
+                        <?php echo e(request()->filled('kode_region') ? '' : 'disabled'); ?>>
+                    <?php $__currentLoopData = $filteredSites; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $site): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <option value="<?php echo e($site->kode_site); ?>" 
+                                <?php echo e(in_array($site->kode_site, request('kode_site', [])) ? 'selected' : ''); ?>>
+                            <?php echo e($site->nama_site); ?>
+
                         </option>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </select>
 
                 <select name="kode_perangkat[]" class="select2" multiple data-placeholder="Pilih Perangkat" onchange="document.getElementById('filterForm').submit()">
-                @foreach($types as $type)
-                        <option value="{{ $type->kode_perangkat }}" {{ in_array($type->kode_perangkat, request('kode_perangkat', [])) ? 'selected' : '' }}>
-                            {{ $type->nama_perangkat }}
+                <?php $__currentLoopData = $types; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $type): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <option value="<?php echo e($type->kode_perangkat); ?>" <?php echo e(in_array($type->kode_perangkat, request('kode_perangkat', [])) ? 'selected' : ''); ?>>
+                            <?php echo e($type->nama_perangkat); ?>
+
                         </option>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </select>
             </div>
         </form>
-        @endif
+        <?php endif; ?>
 
         <div class="table-responsive" style="margin-top: 20px;">
             <table id="perangkatTable" class="table table-bordered table-striped">
@@ -65,15 +66,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($dataperangkat as $perangkat)
+                    <?php $__currentLoopData = $dataperangkat; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $perangkat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <tr>
                             <td>
-                                <div class="status-box {{ $perangkat->no_rack ? 'bg-success' : 'bg-danger' }}"></div>
+                                <div class="status-box <?php echo e($perangkat->no_rack ? 'bg-success' : 'bg-danger'); ?>"></div>
                             </td>
-                            <td>{{ $loop->iteration }}</td>
+                            <td><?php echo e($loop->iteration); ?></td>
                             <td>
-                                {{
-                                    implode('-', array_filter([
+                                <?php echo e(implode('-', array_filter([
                                         $perangkat->kode_region,
                                         $perangkat->kode_site,
                                         $perangkat->no_rack,
@@ -81,179 +81,185 @@
                                         $perangkat->perangkat_ke,
                                         $perangkat->kode_brand,
                                         $perangkat->type
-                                    ]))
-                                }}
+                                    ]))); ?>
+
                             </td>
-<td>{{ optional($perangkat->region)->nama_region ?? '-' }}</td>
-<td>{{ optional($perangkat->site)->nama_site ?? '-' }}</td>
-                            <td>{{ $perangkat->no_rack }}</td>
-<td>{{ optional($perangkat->jenisperangkat)->nama_perangkat ?? '-' }}</td>
-                            <td>{{ optional($perangkat->brandperangkat)->nama_brand }}</td>
-                            <td>{{ $perangkat->type }}</td>
+<td><?php echo e(optional($perangkat->region)->nama_region ?? '-'); ?></td>
+<td><?php echo e(optional($perangkat->site)->nama_site ?? '-'); ?></td>
+                            <td><?php echo e($perangkat->no_rack); ?></td>
+<td><?php echo e(optional($perangkat->jenisperangkat)->nama_perangkat ?? '-'); ?></td>
+                            <td><?php echo e(optional($perangkat->brandperangkat)->nama_brand); ?></td>
+                            <td><?php echo e($perangkat->type); ?></td>
                             <td>
                                 <div class="action-buttons">
                                     <button class="btn btn-eye btn-sm mb-1"
-                                        onclick="openModal('modalViewPerangkat{{ $perangkat->id_perangkat }}')">
+                                        onclick="openModal('modalViewPerangkat<?php echo e($perangkat->id_perangkat); ?>')">
                                         <i class="fas fa-eye"></i> 
                                     </button>   
-                                    @if(auth()->user()->role == '1' || auth()->user()->role == '2')
+                                    <?php if(auth()->user()->role == '1' || auth()->user()->role == '2'): ?>
                                     <button class="btn btn-edit btn-sm mb-1"
-                                        onclick="openModal('modalEditPerangkat{{ $perangkat->id_perangkat }}')">
+                                        onclick="openModal('modalEditPerangkat<?php echo e($perangkat->id_perangkat); ?>')">
                                         <i class="fas fa-edit"></i> 
                                     </button>
                                     <button class="btn btn-delete btn-sm"
-                                        onclick="confirmDelete({{ $perangkat->id_perangkat }})">
+                                        onclick="confirmDelete(<?php echo e($perangkat->id_perangkat); ?>)">
                                         <i class="fas fa-trash-alt"></i> 
                                     </button>
 
-                                    <form id="delete-form-{{ $perangkat->id_perangkat }}" 
-                                        action="{{ route('perangkat.destroy', $perangkat->id_perangkat) }}" 
+                                    <form id="delete-form-<?php echo e($perangkat->id_perangkat); ?>" 
+                                        action="<?php echo e(route('perangkat.destroy', $perangkat->id_perangkat)); ?>" 
                                         method="POST" style="display: none;">
-                                        @csrf
-                                        @method('DELETE')
+                                        <?php echo csrf_field(); ?>
+                                        <?php echo method_field('DELETE'); ?>
                                     </form>
-                                    @endif
+                                    <?php endif; ?>
                                 </div>
                             </td>
                         </tr>
-                        <div id="modalViewPerangkat{{ $perangkat->id_perangkat }}" class="modal">
+                        <div id="modalViewPerangkat<?php echo e($perangkat->id_perangkat); ?>" class="modal">
                             <div class="modal-content">
-                                <span class="close" onclick="closeModal('modalViewPerangkat{{ $perangkat->id_perangkat }}')">&times;</span>
+                                <span class="close" onclick="closeModal('modalViewPerangkat<?php echo e($perangkat->id_perangkat); ?>')">&times;</span>
                                 <h5>Detail Perangkat</h5>
                                 
                                 <div style="display: flex; flex-wrap: wrap; gap: 10px;">
                                     <div style="width: 48%;">
                                         <label>Region</label>
-                                        <input type="text" value="{{ $perangkat->region->nama_region }}" readonly class="form-control">
+                                        <input type="text" value="<?php echo e($perangkat->region->nama_region); ?>" readonly class="form-control">
                                                                               
                                         <label>Jenis</label>
-                                        <input type="text" value="{{ $perangkat->jenisperangkat->nama_perangkat }}" readonly class="form-control">
+                                        <input type="text" value="<?php echo e($perangkat->jenisperangkat->nama_perangkat); ?>" readonly class="form-control">
                                         
                                         <label>No Rack</label>
-                                        <input type="text" value="{{ $perangkat->no_rack }}" readonly class="form-control">
+                                        <input type="text" value="<?php echo e($perangkat->no_rack); ?>" readonly class="form-control">
 
                                         <label>U Awal - U Akhir</label>
-                                        <input type="text" value="{{ $perangkat->uawal }} - {{ $perangkat->uakhir }}" readonly class="form-control">
+                                        <input type="text" value="<?php echo e($perangkat->uawal); ?> - <?php echo e($perangkat->uakhir); ?>" readonly class="form-control">
 
                                         <label>Perangkat ke-</label>
-                                        <input type="text" value="{{ $perangkat->perangkat_ke }}" readonly class="form-control">
+                                        <input type="text" value="<?php echo e($perangkat->perangkat_ke); ?>" readonly class="form-control">
                                     </div>
 
                                     <div style="width: 48%;">
                                         <label>Site</label>
-                                        <input type="text" value="{{ $perangkat->site->nama_site }}" readonly class="form-control">
+                                        <input type="text" value="<?php echo e($perangkat->site->nama_site); ?>" readonly class="form-control">
 
                                         <label>Brand</label>
-                                        <input type="text" value="{{ optional($perangkat->brandperangkat)->nama_brand }}" readonly class="form-control">
+                                        <input type="text" value="<?php echo e(optional($perangkat->brandperangkat)->nama_brand); ?>" readonly class="form-control">
 
                                         <label>Milik</label>
-                                        <input type="text" value="{{ $perangkat->user->name }}" readonly class="form-control">
+                                        <input type="text" value="<?php echo e($perangkat->user->name); ?>" readonly class="form-control">
     
                                         <label>Type</label>
-                                        <input type="text" value="{{ $perangkat->type }}" readonly class="form-control">
+                                        <input type="text" value="<?php echo e($perangkat->type); ?>" readonly class="form-control">
                                     </div>
                                 </div>
                             </div>
                         </div>
 
 
-                        <div id="modalEditPerangkat{{ $perangkat->id_perangkat }}" class="modal">
+                        <div id="modalEditPerangkat<?php echo e($perangkat->id_perangkat); ?>" class="modal">
                             <div class="modal-content">
                                 <span class="close"
-                                    onclick="closeModal('modalEditPerangkat{{ $perangkat->id_perangkat }}')">&times;</span>
+                                    onclick="closeModal('modalEditPerangkat<?php echo e($perangkat->id_perangkat); ?>')">&times;</span>
                                 <h5>Edit Perangkat</h5>
-                                <form action="{{ route('perangkat.update', $perangkat->id_perangkat) }}" method="POST">
-                                    @csrf
-                                    @method('PUT')
+                                <form action="<?php echo e(route('perangkat.update', $perangkat->id_perangkat)); ?>" method="POST">
+                                    <?php echo csrf_field(); ?>
+                                    <?php echo method_field('PUT'); ?>
                                     <div style="display: flex; flex-wrap: wrap; gap: 10px;">
                                         <div style="width: 48%;">
                                             <div class="mb-3">
                                                 <label>Region</label>
                                                 <select name="kode_region" class="form-control regionSelectEdit" style="padding: 5px;"
-                                                    data-id="{{ $perangkat->id_perangkat }}" required>
+                                                    data-id="<?php echo e($perangkat->id_perangkat); ?>" required>
                                                     <option value="">Pilih Region</option>
-                                                    @foreach($regions as $region)
-                                                        <option value="{{ $region->kode_region }}" {{ $perangkat->kode_region == $region->kode_region ? 'selected' : '' }}>
-                                                            {{ $region->nama_region }}
+                                                    <?php $__currentLoopData = $regions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $region): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                        <option value="<?php echo e($region->kode_region); ?>" <?php echo e($perangkat->kode_region == $region->kode_region ? 'selected' : ''); ?>>
+                                                            <?php echo e($region->nama_region); ?>
+
                                                         </option>
-                                                    @endforeach
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                 </select>
                                             </div>                                           
                                             <div class="mb-3">
                                                 <label>Jenis</label>
                                                 <select name="kode_perangkat" class="form-control" required>
                                                     <option value="">Pilih Perangkat</option>
-                                                    @foreach($types as $jenisperangkat)
-                                                        <option value="{{ $jenisperangkat->kode_perangkat }}" 
-                                                            {{ $perangkat->kode_perangkat == $jenisperangkat->kode_perangkat ? 'selected' : '' }}>{{ $jenisperangkat->nama_perangkat }}
+                                                    <?php $__currentLoopData = $types; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $jenisperangkat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                        <option value="<?php echo e($jenisperangkat->kode_perangkat); ?>" 
+                                                            <?php echo e($perangkat->kode_perangkat == $jenisperangkat->kode_perangkat ? 'selected' : ''); ?>><?php echo e($jenisperangkat->nama_perangkat); ?>
+
                                                         </option>
-                                                    @endforeach
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                 </select>
                                             </div>  
                                             <label>No Rack</label>
                                             <select name="no_rack" class="form-control noRackSelectEdit"
-                                                data-id="{{ $perangkat->id_perangkat }}">
+                                                data-id="<?php echo e($perangkat->id_perangkat); ?>">
                                                 <option value="">Pilih No Rack</option>
-                                                @foreach($racks as $rack)
-                                                    @if($rack->kode_region == $perangkat->kode_region && $rack->kode_site == $perangkat->kode_site)
-                                                        <option value="{{ $rack->no_rack }}" {{ $perangkat->no_rack == $rack->no_rack ? 'selected' : '' }}>
-                                                            {{ $rack->no_rack }}
+                                                <?php $__currentLoopData = $racks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $rack): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <?php if($rack->kode_region == $perangkat->kode_region && $rack->kode_site == $perangkat->kode_site): ?>
+                                                        <option value="<?php echo e($rack->no_rack); ?>" <?php echo e($perangkat->no_rack == $rack->no_rack ? 'selected' : ''); ?>>
+                                                            <?php echo e($rack->no_rack); ?>
+
                                                         </option>
-                                                    @endif
-                                                @endforeach
+                                                    <?php endif; ?>
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                             </select>
                                             <div class="mb-3">
                                                 <label>U Awal</label>
                                                 <input type="number" name="uawal" class="form-control"
-                                                    value="{{ $perangkat->uawal ?? '' }}" >
+                                                    value="<?php echo e($perangkat->uawal ?? ''); ?>" >
                                             </div>
                                             <div class="mb-3">
                                                 <label>U Akhir</label>
                                                 <input type="number" name="uakhir" class="form-control"
-                                                    value="{{ $perangkat->uakhir ?? '' }}" >
+                                                    value="<?php echo e($perangkat->uakhir ?? ''); ?>" >
                                             </div>
                                         </div>
                                         <div style="width: 48%;">
                                             <div class="mb-3">
                                                 <label>Site</label>
                                                 <select name="kode_site" class="form-control siteSelectEdit"
-                                                    data-id="{{ $perangkat->id_perangkat }}" required>
+                                                    data-id="<?php echo e($perangkat->id_perangkat); ?>" required>
                                                     <option value="">Pilih Site</option>
-                                                    @foreach($sites as $site)
-                                                        @if($site->kode_region == $perangkat->kode_region)
-                                                            <option value="{{ $site->kode_site }}" {{ $perangkat->kode_site == $site->kode_site ? 'selected' : '' }}>
-                                                                {{ $site->nama_site }}
+                                                    <?php $__currentLoopData = $sites; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $site): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                        <?php if($site->kode_region == $perangkat->kode_region): ?>
+                                                            <option value="<?php echo e($site->kode_site); ?>" <?php echo e($perangkat->kode_site == $site->kode_site ? 'selected' : ''); ?>>
+                                                                <?php echo e($site->nama_site); ?>
+
                                                             </option>
-                                                        @endif
-                                                    @endforeach
+                                                        <?php endif; ?>
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                 </select>
                                             </div>
                                             <div class="mb-3">
                                                 <label>Brand</label>
                                                 <select name="kode_brand" class="form-control">
                                                     <option value="">Pilih Brand</option>
-                                                    @foreach($brands as $brandperangkat)
-                                                        <option value="{{ $brandperangkat->kode_brand }}" 
-                                                            {{ $perangkat->kode_brand == $brandperangkat->kode_brand ? 'selected' : '' }}>
-                                                            {{ $brandperangkat->nama_brand }}
+                                                    <?php $__currentLoopData = $brands; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $brandperangkat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                        <option value="<?php echo e($brandperangkat->kode_brand); ?>" 
+                                                            <?php echo e($perangkat->kode_brand == $brandperangkat->kode_brand ? 'selected' : ''); ?>>
+                                                            <?php echo e($brandperangkat->nama_brand); ?>
+
                                                         </option>
-                                                    @endforeach
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                 </select>
                                             </div>
                                             <div class="mb-3">
                                                 <label>Milik</label>
                                                 <select name="milik" class="form-control" required>
                                                     <option value="">Pilih Kepemilikan</option>
-                                                    @foreach($users as $milik)
-                                                        <option value="{{ $milik->id }}" 
-                                                            {{ $perangkat->milik == $milik->id ? 'selected' : '' }}>{{ $milik->name }}
+                                                    <?php $__currentLoopData = $users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $milik): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                        <option value="<?php echo e($milik->id); ?>" 
+                                                            <?php echo e($perangkat->milik == $milik->id ? 'selected' : ''); ?>><?php echo e($milik->name); ?>
+
                                                         </option>
-                                                    @endforeach
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                 </select>
                                             </div>
                                             <div class="mb-3">
                                                 <label>Type</label>
-                                                <input type="text" name="type" class="form-control" value="{{ $perangkat->type ?? '' }}"
+                                                <input type="text" name="type" class="form-control" value="<?php echo e($perangkat->type ?? ''); ?>"
                                                     >
                                             </div>
                                         </div>
@@ -262,7 +268,7 @@
                                 </form>
                             </div>
                         </div>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </tbody>
             </table>
         </div>
@@ -271,8 +277,8 @@
             <div class="modal-content">
                 <span class="close" onclick="closeModal('importModal')">&times;</span>
                 <h5>Impor Data Perangkat</h5>
-                <form action="{{ route('import.perangkat') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
+                <form action="<?php echo e(route('import.perangkat')); ?>" method="POST" enctype="multipart/form-data">
+                    <?php echo csrf_field(); ?>
                     <div class="mb-3">
                         <label for="file">Pilih File (XLSX)</label>
                         <input type="file" class="form-control" name="file" accept=".xlsx,.xls,.csv" required>
@@ -286,19 +292,20 @@
             <div class="modal-content">
                 <span class="close" onclick="closeModal('exportModal')">&times;</span>
                 <h5>Ekspor Data Perangkat</h5>
-                <form id="exportForm" action="{{ url('export/perangkat') }}" method="POST">
-                    @csrf
+                <form id="exportForm" action="<?php echo e(url('export/perangkat')); ?>" method="POST">
+                    <?php echo csrf_field(); ?>
                     <div class="mb-3">
                         <label for="regions">Pilih Region:</label>
                         <div id="regions">
-                            @foreach ($regions as $region)
+                            <?php $__currentLoopData = $regions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $region): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="regions[]" value="{{ $region['kode_region'] }}" id="region-{{ $loop->index }}">
-                                    <a class="form-check-label" for="region-{{ $loop->index }}">
-                                        {{ $region['nama_region'] }}
+                                    <input class="form-check-input" type="checkbox" name="regions[]" value="<?php echo e($region['kode_region']); ?>" id="region-<?php echo e($loop->index); ?>">
+                                    <a class="form-check-label" for="region-<?php echo e($loop->index); ?>">
+                                        <?php echo e($region['nama_region']); ?>
+
                                     </a>
                                 </div>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </div>
                         <div class="mb-3" style="margin-top: 20px;">
                             <label for="format">Pilih Format File:</label>
@@ -319,17 +326,17 @@
                 <span class="close" onclick="closeModal('modalTambahPerangkat')">&times;</span>
                 <h5>Tambah Perangkat</h5>
 
-                <form action="{{ route('perangkat.store') }}" method="POST" id="formTambahPerangkat">
-                    @csrf
+                <form action="<?php echo e(route('perangkat.store')); ?>" method="POST" id="formTambahPerangkat">
+                    <?php echo csrf_field(); ?>
                     <div style="display: flex; flex-wrap: wrap; gap: 10px;">
                         <div style="width: 48%;">
                             <div class="mb-3">
                                 <label>Region</label>
                                 <select id="regionSelectTambah" name="kode_region" class="form-control" required>
                                     <option value="">Pilih Region</option>
-                                    @foreach($regions as $region)
-                                        <option value="{{ $region->kode_region }}">{{ $region->nama_region }}</option>
-                                    @endforeach
+                                    <?php $__currentLoopData = $regions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $region): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($region->kode_region); ?>"><?php echo e($region->nama_region); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </select>
                             </div>
 
@@ -337,11 +344,12 @@
                                 <label>Jenis</label>
                                 <select name="kode_perangkat" class="form-control" required>
                                     <option value="">Pilih Perangkat</option>
-                                    @foreach($types as $jenisperangkat)
-                                        <option value="{{ $jenisperangkat->kode_perangkat }}">
-                                            {{ $jenisperangkat->nama_perangkat }}
+                                    <?php $__currentLoopData = $types; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $jenisperangkat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($jenisperangkat->kode_perangkat); ?>">
+                                            <?php echo e($jenisperangkat->nama_perangkat); ?>
+
                                         </option>
-                                    @endforeach
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </select>
                             </div>
 
@@ -376,11 +384,12 @@
                                 <label>Brand</label>
                                 <select name="kode_brand" class="form-control">
                                     <option value="">Pilih Brand</option>
-                                    @foreach($brands as $brandperangkat)
-                                        <option value="{{ $brandperangkat->kode_brand }}">
-                                            {{ $brandperangkat->nama_brand }}
+                                    <?php $__currentLoopData = $brands; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $brandperangkat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($brandperangkat->kode_brand); ?>">
+                                            <?php echo e($brandperangkat->nama_brand); ?>
+
                                         </option>
-                                    @endforeach
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </select>
                             </div>
 
@@ -388,9 +397,9 @@
                                 <label>Milik</label>
                                 <select name="milik" class="form-control" required>
                                     <option value="">Pilih Kepemilikan</option>
-                                    @foreach($users as $user)
-                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                    @endforeach
+                                    <?php $__currentLoopData = $users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($user->id); ?>"><?php echo e($user->name); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </select>
                             </div>
 
@@ -409,7 +418,7 @@
     </div>
 </div>
 
-    @section('scripts')
+    <?php $__env->startSection('scripts'); ?>
         <script>
             $(document).ready(function() {
                 $('.select2').select2({
@@ -429,7 +438,7 @@
                     if (selectedRegions && selectedRegions.length > 0) {
                         siteSelect.prop('disabled', false);
                         
-                        const sites = @json($sites);
+                        const sites = <?php echo json_encode($sites, 15, 512) ?>;
                         const filteredSites = sites.filter(site => 
                             selectedRegions.includes(site.kode_region)
                         );
@@ -487,7 +496,7 @@
 
                 if (regionId) {
                     siteSelect.disabled = false;
-                    const sites = @json($sites);
+                    const sites = <?php echo json_encode($sites, 15, 512) ?>;
                     const filteredSites = sites.filter(site => site.kode_region == regionId);
 
                     filteredSites.forEach(site => {
@@ -510,7 +519,7 @@
                 if (regionId && siteId) {
                     rackSelect.disabled = false;
                     
-                    const racks = @json($racks); 
+                    const racks = <?php echo json_encode($racks, 15, 512) ?>; 
                     const filteredRacks = racks.filter(rack => rack.kode_region == regionId && rack.kode_site == siteId);
 
                     filteredRacks.forEach(rack => {
@@ -536,7 +545,7 @@
 
                     if (regionId) {
                         siteSelect.disabled = false;
-                        const sites = @json($sites);
+                        const sites = <?php echo json_encode($sites, 15, 512) ?>;
                         const filteredSites = sites.filter(site => site.kode_region == regionId);
 
                         filteredSites.forEach(site => {
@@ -561,7 +570,7 @@
 
                     if (regionId && siteId) {
                         rackSelect.disabled = false;
-                        const racks = @json($racks);
+                        const racks = <?php echo json_encode($racks, 15, 512) ?>;
                         const filteredRacks = racks.filter(rack => rack.kode_region == regionId && rack.kode_site == siteId);
 
                         filteredRacks.forEach(rack => {
@@ -627,5 +636,7 @@
             //     });
             // });
         </script>
-    @endsection
-@endsection
+    <?php $__env->stopSection(); ?>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\Sourcekode\CODE-AMSVMS\resources\views/aset/perangkat.blade.php ENDPATH**/ ?>
