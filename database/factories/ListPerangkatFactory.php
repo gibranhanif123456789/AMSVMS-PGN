@@ -12,8 +12,16 @@ class ListPerangkatFactory extends Factory
     public function definition(): array
     {
         return [
-            'nama_perangkat' => $this->faker->sentence(),
-            'deskripsi' => $this->faker->paragraph(),
+            'kode_region'    => 'RG01',
+            'kode_site'      => 'ST01',
+            'no_rack'        => 'R01',
+            'kode_perangkat' => 'PR' . $this->faker->unique()->numberBetween(1, 999),
+            'perangkat_ke'   => $this->faker->numberBetween(1, 10),
+            'kode_brand'     => 'BR01',
+            'type'           => $this->faker->word(),
+            'uawal'          => $this->faker->numberBetween(1, 20),
+            'uakhir'         => $this->faker->numberBetween(21, 40),
+            'milik'          => $this->faker->boolean(),
         ];
     }
 }

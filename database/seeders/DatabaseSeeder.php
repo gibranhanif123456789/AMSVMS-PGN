@@ -15,6 +15,8 @@ class DatabaseSeeder extends Seeder
         // Jalankan AdminUserSeeder
         $this->call(AdminUserSeeder::class);
          ListPerangkat::factory()->count(5)->create();
-        
+            $this->call([
+        UserSeeder::class,
+    ]);
     }
 }
